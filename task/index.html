@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Geonames</title>
+
+	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
+</head>
+<body>
+	<!-- Preloader -->
+	<div id=”preloader”></div>
+
+	<table>
+		<!-- Head of Table -->
+		<thead>
+			<tr>
+				<th>
+					API name
+				</th>
+				<th>
+					API description
+				</th>
+				<th>
+					Action
+				</th>	
+			</tr>
+
+		</thead>
+		<tbody>
+			<!-- getFindNearbyPlace --> 
+			<tr>
+				<td>
+					getFindNearbyPlace
+				</td>
+				<td>
+					<span>Latitude = </span> <input type="number" name="latitude" id="latitude"> <br>
+					<span>Longitude = </span> <input type="number" name="longitude" id="longitude">
+				</td>
+				<td>
+					<button id="getFindNearbyPlaceButton">Submit</button>
+				</td>	
+			</tr>
+
+			<!-- getEarchQuakes --> 
+			<tr>
+				<td>
+					getEarthQuakes
+				</td>
+				<td>
+					<span>North = </span> <input type="number" name="north" id="north"> <br>
+					<span>South = </span> <input type="number" name="south" id="south"> <br>
+					<span>East = </span> <input type="number" name="east" id="east"> <br>
+					<span>West = </span> <input type="number" name="west" id="west">
+				</td>
+				<td>
+					<button id="getEarthQuakesButton">Submit</button>
+				</td>	
+			</tr>
+
+			<!-- getPostalcodeSearch --> 
+			<tr>
+				<td>
+					getPostalcodeSearch
+				</td>
+				<td>
+					Postalcode = <select id="postalCode">
+								    <option value="10001">New York, NY - 10001</option>
+								    <option value="90001">Los Angeles, CA - 90001</option>
+								    <option value="60601">Chicago, IL - 60601</option>
+								    <!-- Diğer seçenekler buraya eklenebilir -->
+								</select>
+								 <br>
+					<span>MaxRows = </span> <input type="number" name="maxRows" id="maxRows">
+				</td>
+				<td>
+					<button id="getPostalCodeButton">Submit</button>
+				</td>	
+			</tr>
+			<tr>
+				<td colspan="3">
+					<p id=result>Result</p>
+				</td>
+			</tr>
+
+		</tbody>
+	</table>
+	<!-- getPostalCode("N103PL", "10") -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="assets/js/main.js" defer></script>
+
+</body>
+</html>
