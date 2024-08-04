@@ -14,7 +14,14 @@ if(
 
 	$endpoint = "geo/1.0/direct?q=" . $_GET['city_name'] . "&limit=5&appid=" . API::$openWeatherAPIKEY;
 
-	echo $api->makeGETRequest("openweather" ,$endpoint);
+	$result = $api->makeGETRequest("openweather" ,$endpoint);
+	$decodedResult = json_decode($result, true);
+	
+	$decodedResult["status"]["error"] = "0";
+	$decodedResult["status"]["message"] = "successful";
+
+	
+	echo json_encode($decodedResult);
 } else {
 	$decodedResult = [];
 

@@ -13,8 +13,14 @@ if(
 	$api = new API();
 
 	$endpoint = "countryInfoJSON?formatted=true&lang=en" . "&country=" . $_GET['country_code'] . "&username=". API::$username ."&style=full";
+	$result = $api->makeGETRequest("geonames" ,$endpoint);
+	$decodedResult = json_decode($result, true);
+	
+	$decodedResult["status"]["error"] = "0";
+	$decodedResult["status"]["message"] = "successful";
 
-	echo $api->makeGETRequest("geonames" ,$endpoint);
+	
+	echo json_encode($decodedResult);
 } else {
 	$decodedResult = [];
 

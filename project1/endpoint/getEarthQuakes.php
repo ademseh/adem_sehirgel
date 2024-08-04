@@ -16,7 +16,14 @@ if(
 	$api = new API();
 	$endpoint = "earthquakesJSON?formatted=true&north=" . $_GET["north"] . "&south=" . $_GET['south'] . "&east=" . $_GET['east'] . "&west=" . $_GET['west'] . "&username=". API::$username ."&style=full";
 
-	echo $api->makeGETRequest("geonames" ,$endpoint);
+	$result = $api->makeGETRequest("geonames" ,$endpoint);
+	$decodedResult = json_decode($result, true);
+	
+	$decodedResult["status"]["error"] = "0";
+	$decodedResult["status"]["message"] = "successful";
+
+	
+	echo json_encode($decodedResult);
 } else {
 	$decodedResult = [];
 

@@ -14,7 +14,14 @@ if(
 	$api = new API();
 	$endpoint = "data/2.5/weather?lat=" . $_GET['lat'] . "&lon=" . $_GET['lng'] . "&appid=". API::$openWeatherAPIKEY;
 
-	echo $api->makeGETRequest("openweather" ,$endpoint);
+	$result = $api->makeGETRequest("openweather" ,$endpoint);
+	$decodedResult = json_decode($result, true);
+	
+	$decodedResult["status"]["error"] = "0";
+	$decodedResult["status"]["message"] = "successful";
+
+	
+	echo json_encode($decodedResult);
 } else {
 	$decodedResult = [];
 

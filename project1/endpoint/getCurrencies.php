@@ -12,7 +12,14 @@ if(
 
 	$endpoint = "api/latest.json?app_id=". API::$openExchangeAPIKEY ."&base=" . $_GET["currency"];
 
-	echo $api->makeGETRequest("openexchange" ,$endpoint);
+	$result = $api->makeGETRequest("openexchange" ,$endpoint);
+	$decodedResult = json_decode($result, true);
+	
+	$decodedResult["status"]["error"] = "0";
+	$decodedResult["status"]["message"] = "successful";
+
+	
+	echo json_encode($decodedResult);
 } else {
 	$decodedResult = [];
 

@@ -14,7 +14,11 @@ if(
 
 	$endpoint = "v2/everything?q=" . $_GET['query'] . "&apiKey=" . API::$newsApiAPIKEY;
 
-	echo $api->makeGETRequest("newsapi" ,$endpoint);
+	$result = $api->makeGETRequest("newsapi" ,$endpoint);
+
+
+	
+	echo $result;
 } else {
 	$decodedResult = [];
 

@@ -15,7 +15,14 @@ if(
 
 	$endpoint = "wikipediaSearchJSON?formatted=true" . "&q=" . $_GET['country_name'] . "&username=". API::$username ."&style=full";
 
-	echo $api->makeGETRequest("geonames" ,$endpoint);
+	$result = $api->makeGETRequest("geonames" ,$endpoint);
+	$decodedResult = json_decode($result, true);
+	
+	$decodedResult["status"]["error"] = "0";
+	$decodedResult["status"]["message"] = "successful";
+
+	
+	echo json_encode($decodedResult);
 } else {
 	$decodedResult = [];
 
