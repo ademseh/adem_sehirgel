@@ -4,30 +4,80 @@ var locations = ""
 var filteredDepartment = ""
 var filteredLocation = ""
 
+var activeTable = ""
+
+var deleteType = {
+    personnel: "personnel",
+    department: "department",
+    location: "location"
+}
+
 
 init()
 
+
 function init() {
+    activeTable = "personnel"
     refreshAlldatas()
 }
 
+function initDeleteButtons(){
+    initializePersonnelDeleteButtons()
+    initializeDepartmentlDeleteButtons()
+    initializeLocationDeleteButtons()
+}
+
 $("#refreshBtn").click(function() {
-
-    refreshAlldatas()
+    if(activeTable == "personnel"){
+        getPersonnels()
+    } else if (activeTable == "department") {
+        getDepartments()
+    } else {
+        getLocations()
+    }
+    //refreshAlldatas()
 });
+$("#filterModalForm").submit(function(event) {
+    event.preventDefault();
 
+    filteredDepartment = $("#filterModal #filterDepartment").val()
+    filteredLocation = $("#filterModal #filterLocation").val()
+
+    if(activeTable == "personnel"){
+        getPersonnels()
+    } else if (activeTable == "department") {
+        getDepartments()
+    }
+
+})
+/*
 $("#filterModal #filter-btn").on("click", function(event) {
     filteredDepartment = $("#filterModal #filterDepartment").val()
     filteredLocation = $("#filterModal #filterLocation").val()
 
-    getPersonnels()
+    if(activeTable == "personnel"){
+        getPersonnels()
+    } else if (activeTable == "department") {
+        getDepartments()
+    }
 });
+*/
+
 $("#filterModal #reset-filter-btn").on("click", function(event) {
-    filteredDepartment = ""
-    filteredLocation = ""
-    getPersonnels()
+    resetFilter()
 
 });
+
+function resetFilter(){
+    filteredDepartment = ""
+    filteredLocation = ""
+
+    if(activeTable == "personnel"){
+        getPersonnels()
+    } else if (activeTable == "department") {
+        getDepartments()
+    }
+}
 
 $("#filterBtn").click(function() {
     $("#filterModal").modal('show');
@@ -42,14 +92,20 @@ $("#addBtn").click(function() {
 
     // Replicate the logic of the refresh button click to open the add modal for the table that is currently on display
     if ($("#personnelBtn").hasClass("active")) {
+        activeTable = "personnel"
+
         clearAddModal();
         // Refresh personnel table
         $("#addPersonnelModal").modal('show');
     } else {
 
         if ($("#departmentsBtn").hasClass("active")) {
+            activeTable = "department"
+
             $("#addDepartmentModal").modal('show');
         } else {
+            activeTable = "location"
+
             $("#addLocationModal").modal('show');
 
         }
@@ -60,19 +116,27 @@ $("#addBtn").click(function() {
 $("#personnelBtn").click(function() {
 
     // Call function to refresh personnel table
-
+    activeTable = "personnel";
+    $("#filterBtn").css("display", "block")
+    resetFilter()
 });
 
 $("#departmentsBtn").click(function() {
 
     // Call function to refresh department table
+    activeTable = "department";
+    $("#filterBtn").css("display", "block")
+    $("#department-form").css("display", "none")
+    resetFilter()
 
 });
 
 $("#locationsBtn").click(function() {
 
     // Call function to refresh location table
-
+    activeTable = "location";
+    $("#filterBtn").css("display", "none")
+    resetFilter()
 });
 
 //PERSONNEL
@@ -494,7 +558,7 @@ function getPersonnels() {
                             '<button type="button" class="btn btn-primary btn-sm m-1" data-bs-toggle="modal" data-bs-target="#editPersonnelModal" data-id="' + element.id + '">' +
                             '<i class="fa-solid fa-pencil fa-fw"></i>' +
                             '</button>' +
-                            '<button type="button" class="btn btn-primary btn-sm delete-personnel-btn m-1" data-id="' + element.id + '">' +
+                            '<button type="button" class="btn btn-primary btn-sm delete-personnel-btn m-1" data-name="'+ element.lastName + ' ' + element.firstName +'" data-id="' + element.id + '">' +
                             '<i class="fa-solid fa-trash fa-fw"></i>' +
                             '</button>' +
                             '</td>' +
@@ -553,43 +617,46 @@ function getDepartments() {
                 );
 
                 datas.forEach(element => {
-                    if (element.name != null) {
+                    if (filteredLocation === "" || element.location_name === filteredLocation && element.name != null) {
+                     
 
-                        $("#filterModal #filterDepartment").append(
-                            $("<option>", {
-                                value: element.name,
-                                text: element.name
-                            })
-                        );
-
-                        $("#filterModal #filterLocation").append(
-                            $("<option>", {
-                                value: element.location_name,
-                                text: element.location_name
-                            })
-                        );
-
-                      
-
-                        $("#departmentTableBody").append(
-                            '<tr>' +
-                            '<td class="align-middle text-nowrap">' +
-                            element.name +
-                            '</td>' +
-                            '<td class="align-middle text-nowrap d-none d-md-table-cell">' +
-                            element.location_name + '</td>' +
-                            '<td class="align-middle text-end text-nowrap">' +
-                            '<button type="button" class="btn btn-primary btn-sm m-1" data-bs-toggle="modal" data-bs-target="#editDepartmentModal" data-id="' + element.id + '">' +
-                            '<i class="fa-solid fa-pencil fa-fw"></i>' +
-                            '</button>' +
-                            '<button type="button" class="btn btn-primary btn-sm delete-department-btn m-1" data-id="' + element.id + '">' +
-                            '<i class="fa-solid fa-trash fa-fw"></i>' +
-                            '</button>' +
-                            '</td>' +
-                            '</tr>'
-
-                        )
+                            $("#filterModal #filterDepartment").append(
+                                $("<option>", {
+                                    value: element.name,
+                                    text: element.name
+                                })
+                            );
+    
+                            $("#filterModal #filterLocation").append(
+                                $("<option>", {
+                                    value: element.location_name,
+                                    text: element.location_name
+                                })
+                            );
+    
+                          
+    
+                            $("#departmentTableBody").append(
+                                '<tr>' +
+                                '<td class="align-middle text-nowrap">' +
+                                element.name +
+                                '</td>' +
+                                '<td class="align-middle text-nowrap d-none d-md-table-cell">' +
+                                element.location_name + '</td>' +
+                                '<td class="align-middle text-end text-nowrap">' +
+                                '<button type="button" class="btn btn-primary btn-sm m-1" data-bs-toggle="modal" data-bs-target="#editDepartmentModal" data-id="' + element.id + '">' +
+                                '<i class="fa-solid fa-pencil fa-fw"></i>' +
+                                '</button>' +
+                                '<button type="button" class="btn btn-primary btn-sm delete-department-btn m-1" data-name="'+ element.name +'" data-id="' + element.id + '">' +
+                                '<i class="fa-solid fa-trash fa-fw"></i>' +
+                                '</button>' +
+                                '</td>' +
+                                '</tr>'
+    
+                            )
+                        
                     }
+                    
 
                 });
                 initializeDepartmentlDeleteButtons()
@@ -633,7 +700,7 @@ function getLocations() {
                         ' <button type="button" class="btn btn-primary btn-sm m-1" data-bs-toggle="modal" data-bs-target="#editLocationModal" data-id="' + element.id + '">' +
                         '<i class="fa-solid fa-pencil fa-fw"></i>' +
                         '</button>' +
-                        '<button type="button" class="btn btn-primary btn-sm delete-location-btn m-1" data-id="' + element.id + '">' +
+                        '<button type="button" class="btn btn-primary btn-sm delete-location-btn m-1" data-name="'+ element.name +'" data-id="' + element.id + '">' +
                         '<i class="fa-solid fa-trash fa-fw"></i>' +
                         '</button>' +
                         '</td>' +
@@ -665,7 +732,7 @@ function updateView(datas) {
     $("#locationTableBody").children("tr").remove()
 
     datas.forEach(element => {
-        console.log(element)
+        
         //Personnel
         $("#personnelTableBody").append(
 
@@ -682,7 +749,7 @@ function updateView(datas) {
             '<button type="button" class="btn btn-primary btn-sm m-1" data-bs-toggle="modal" data-bs-target="#editPersonnelModal" data-id="' + element.id + '">' +
             '<i class="fa-solid fa-pencil fa-fw"></i>' +
             '</button>' +
-            '<button type="button" class="btn btn-primary btn-sm delete-personnel-btn m-1" data-id="' + element.id + '">' +
+            '<button type="button" class="btn btn-primary btn-sm delete-personnel-btn m-1" data-name="' + element.lastName + ", " + element.firstName + '" data-id="' + element.id + '">' +
             '<i class="fa-solid fa-trash fa-fw"></i>' +
             '</button>' +
             '</td>' +
@@ -702,7 +769,7 @@ function updateView(datas) {
             '<button type="button" class="btn btn-primary btn-sm m-1" data-bs-toggle="modal" data-bs-target="#editDepartmentModal" data-id="' + element.departmentID + '">' +
             '<i class="fa-solid fa-pencil fa-fw"></i>' +
             '</button>' +
-            '<button type="button" class="btn btn-primary btn-sm delete-department-btn m-1" data-id="' + element.departmentID + '">' +
+            '<button type="button" class="btn btn-primary btn-sm delete-department-btn m-1" data-name="'+ element.departmentName +'" data-id="' + element.departmentID + '">' +
             '<i class="fa-solid fa-trash fa-fw"></i>' +
             '</button>' +
             '</td>' +
@@ -719,7 +786,7 @@ function updateView(datas) {
             ' <button type="button" class="btn btn-primary btn-sm m-1" data-bs-toggle="modal" data-bs-target="#editLocationModal" data-id="' + element.locationID + '">' +
             '<i class="fa-solid fa-pencil fa-fw"></i>' +
             '</button>' +
-            '<button type="button" class="btn btn-primary btn-sm delete-location-btn m-1" data-id="' + element.locationID + '">' +
+            '<button type="button" class="btn btn-primary btn-sm delete-location-btn m-1" data-name="' + element.locationName + '" data-id="' + element.locationID + '">' +
             '<i class="fa-solid fa-trash fa-fw"></i>' +
             '</button>' +
             '</td>' +
@@ -727,6 +794,8 @@ function updateView(datas) {
 
         )
     });
+
+    initDeleteButtons()
 
 }
 
@@ -760,6 +829,11 @@ function initializePersonnelDeleteButtons() {
     deleteButtons.forEach(button => {
         button.addEventListener('click', function(event) {
             const personnelId = parseInt(button.getAttribute('data-id'));
+            const btnName = button.getAttribute("data-name")
+            showDeleteModal("WARNING!!!", "Are you sure to delete Personnel: " + btnName, deleteType.personnel, personnelId)
+
+
+            /*
             let formData = {
                 id: personnelId
             }
@@ -781,7 +855,7 @@ function initializePersonnelDeleteButtons() {
                     alert("Error adding employee");
                 }
             });
-
+            */
         });
     });
 }
@@ -792,7 +866,10 @@ function initializeDepartmentlDeleteButtons() {
     deleteButtons.forEach(button => {
         button.addEventListener('click', function(event) {
             const departmentId = parseInt(button.getAttribute('data-id'));
+            const btnName = button.getAttribute("data-name")
+            showDeleteModal("WARNING!!!", "Are you sure to delete Department: " + btnName, deleteType.department, departmentId)
 
+            /*
             let formData = {
                 id: parseInt(departmentId)
             }
@@ -816,6 +893,8 @@ function initializeDepartmentlDeleteButtons() {
                             success: function(data) {
                                 // Successfuly delete
                                 refreshAlldatas()
+                                showWarningModal("WARNING", "Successfull Deleted!!!")
+
                             },
                             error: function(error) {
                                 console.error('Error:', error);
@@ -833,7 +912,7 @@ function initializeDepartmentlDeleteButtons() {
                     alert("Error adding employee");
                 }
             });
-
+            */
         });
     });
 }
@@ -844,6 +923,11 @@ function initializeLocationDeleteButtons() {
     deleteButtons.forEach(button => {
         button.addEventListener('click', function(event) {
             const locationID = parseInt(button.getAttribute('data-id'));
+            const btnName = button.getAttribute("data-name")
+            
+
+            showDeleteModal("WARNING!!!", "Are you sure to delete Location: " + btnName, deleteType.location, locationID)
+            /*
             let formData = {
                 id: parseInt(locationID)
             }
@@ -868,6 +952,8 @@ function initializeLocationDeleteButtons() {
                             success: function(data) {
                                 // Successfuly delete
                                 refreshAlldatas()
+                                showWarningModal("WARNING", "Successfull Deleted!!!")
+
                             },
                             error: function(error) {
                                 console.error('Error:', error);
@@ -885,7 +971,7 @@ function initializeLocationDeleteButtons() {
                     alert("Error adding employee");
                 }
             });
-
+            */
         });
     });
 }
@@ -895,6 +981,134 @@ function showWarningModal(title, message){
     $("#warningModal").modal('show');
     $('#warningModal .modal-title').html(title)
     $('#warningModal .modal-message').html(message)
+}
+
+// DELETE MODAL
+function showDeleteModal(title, message, delType, deleteID){
+    $("#deleteModal").modal('show');
+    $('#deleteModal .modal-title').html(title)
+    $('#deleteModal .modal-message').html(message)
+
+    document.getElementById("deleteModalBTN").addEventListener("click", function(){
+        if(delType == deleteType.personnel){
+            //Personnel
+            let formData = {
+                id: deleteID
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "libs/php/deleteEmployeeByID.php",
+                data: formData,
+                dataType: "json",
+                encode: true,
+                success: function(data) {
+                    // Successfuly delete
+                    showWarningModal("WARNING", "Successfully Delete")
+                    refreshAlldatas()
+                    $("#deleteModal").modal('hide');
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                    // Delete throws error
+                    alert("Error while delete employee");
+                }
+            });
+        } else if (delType == deleteType.department){
+            //Department
+
+            let formData = {
+                id: parseInt(deleteID)
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "libs/php/checkIfDepartmentExists.php?departmentID=" + deleteID,
+                data: formData,
+                dataType: "json",
+                encode: true,
+                success: function(data) {
+                    // Successfuly delete
+                    let countOfPersonnel = data.data.personnel_count
+                    if(countOfPersonnel == 0){
+                        $.ajax({
+                            type: "POST",
+                            url: "libs/php/deleteDepartmentByID.php",
+                            data: formData,
+                            dataType: "json",
+                            encode: true,
+                            success: function(data) {
+                                // Successfuly delete
+                                $("#deleteModal").modal('hide');
+                                refreshAlldatas()
+                                showWarningModal("WARNING", "Successfull Deleted!!!")
+
+                            },
+                            error: function(error) {
+                                console.error('Error:', error);
+                                // Delete throws error
+                                alert("Error adding employee");
+                            }
+                        });
+                    } else {
+                        showWarningModal("WARNING", "Exists Personnel with Department count: " + countOfPersonnel)
+                    }
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                    // Delete throws error
+                    alert("Error adding employee");
+                }
+            });
+        } else {
+            //Location
+            let formData = {
+                id: parseInt(deleteID)
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "libs/php/checkIfLocationExists.php?locationID=" + deleteID,
+                data: formData,
+                dataType: "json",
+                encode: true,
+                success: function(data) {
+                  
+                    // Successfuly delete
+                    let countOfDepartment = data.data.department_count
+                    if(countOfDepartment == 0){
+                        $.ajax({
+                            type: "POST",
+                            url: "libs/php/deleteLocationByID.php",
+                            data: formData,
+                            dataType: "json",
+                            encode: true,
+                            success: function(data) {
+                                // Successfuly delete
+                                refreshAlldatas()
+                                showWarningModal("WARNING", "Successfull Deleted!!!")
+                                $("#deleteModal").modal('hide');
+                            },
+                            error: function(error) {
+                                console.error('Error:', error);
+                                // Delete throws error
+                                alert("Error adding employee");
+                            }
+                        });
+                    } else {
+                        showWarningModal("WARNING", "Exists Department with Location count: " + countOfDepartment)
+                    }
+                },
+                error: function(error) {
+                    console.error('Error:', error);
+                    // Delete throws error
+                    alert("Error adding employee");
+                }
+            });
+        }
+        
+
+    })
 }
 
 
